@@ -1,8 +1,10 @@
 # 🛡️ CLAUDIT-SEC
 
-**Security audit tool for Claude Desktop on macOS — including CoWork, extensions, plugins, MCP servers, connectors, and scheduled tasks.**
+**Security audit tool for Claude Desktop on macOS and Windows — including CoWork, extensions, plugins, MCP servers, connectors, and scheduled tasks.**
 
 One command. Full visibility. Read-only.
+
+> ⚠️ **Windows support is a work in progress.** We're aware of a few kinks and bugs and wanted to get something out sooner rather than later. Community feedback and contributions are welcome.
 
 <p align="center">
   <img src="media/claudit-terminal.png" alt="CLAUDIT terminal output" width="700">
@@ -14,7 +16,7 @@ Claude Desktop introduces a new class of endpoint risk: AI agents with autonomou
 
 CLAUDIT gives you that visibility in a single command.
 
-> 📝 **A note on "Code":** Claude Desktop includes a built-in agent coding feature called **Code** (visible in the app's sidebar). This is **not** the same as **Claude Code**, the standalone terminal CLI. CLAUDIT primarily audits Claude Desktop and its CoWork features. It does include a basic check of `~/.claude/settings.json` (the terminal CLI's config), but the focus is squarely on the Desktop app.
+> 📝 **A note on "Code":** Claude Desktop includes a built-in agent coding feature called **Code** (visible in the app's sidebar). This is **not** the same as **Claude Code**, the standalone terminal CLI. CLAUDIT primarily audits Claude Desktop and its CoWork features. It does include a basic check of the Claude Code settings file (`~/.claude/settings.json` on macOS, `%USERPROFILE%\.claude\settings.json` on Windows), but the focus is squarely on the Desktop app.
 
 ## 📋 What It Audits
 
