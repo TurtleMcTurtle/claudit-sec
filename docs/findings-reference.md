@@ -45,6 +45,7 @@ CLAUDIT is a **read-only** tool — it never modifies any audited files. All fin
 ## 1. 🖥️ Desktop Settings
 
 **Source file:** `~/Library/Application Support/Claude/claude_desktop_config.json` → `preferences`
+**Windows path:** `%APPDATA%\Claude\claude_desktop_config.json`
 
 These checks examine user-facing preferences in Claude Desktop that affect system behavior, power management, and UI exposure.
 
@@ -76,6 +77,7 @@ These checks examine user-facing preferences in Claude Desktop that affect syste
 ## 2. 🤖 Cowork Settings
 
 **Source files:** `claude_desktop_config.json` → `preferences`, `cowork_settings.json` (per session)
+**Windows paths:** `%APPDATA%\Claude\claude_desktop_config.json`, `%APPDATA%\Claude\local-agent-mode-sessions\<org>\<user>\cowork_settings.json`
 
 Cowork is Claude Desktop's agentic mode. These checks examine settings that control autonomous behavior — tasks that run without direct user interaction.
 
@@ -166,6 +168,7 @@ Cowork is Claude Desktop's agentic mode. These checks examine settings that cont
 ## 3. 📲 Dispatch
 
 **Source files:** `bridge-state.json`, `local_*.json` (session files) → `hostLoopMode`
+**Windows paths:** `%APPDATA%\Claude\bridge-state.json`, `%APPDATA%\Claude\local-agent-mode-sessions\<org>\<user>\local_*.json`
 
 Dispatch is Claude Desktop's mobile-to-desktop task assignment feature. It allows a user's phone to remotely trigger tasks on their desktop machine. CLAUDIT detects dispatch state from two sources: the bridge configuration file and active session state.
 
@@ -210,6 +213,7 @@ CLAUDIT displays dispatch in three states across all output formats:
 ## 4. 🏢 Workspaces
 
 **Source files:** `local-agent-mode-sessions/<org>/<user>/` directories, `config.json` (DXT keys), `bridge-state.json`
+**Windows paths:** `%APPDATA%\Claude\local-agent-mode-sessions\`, `%APPDATA%\Claude\config.json`, `%APPDATA%\Claude\bridge-state.json`
 
 Claude Desktop can have multiple workspaces (accounts) active simultaneously — for example, a personal free account, a Teams subscription, and an Enterprise subscription. CLAUDIT detects and inventories all workspaces.
 
@@ -250,6 +254,7 @@ Plan type (Free, Pro, Max, Teams, Enterprise) is not stored in any locally acces
 ## 5. 🔌 MCP Servers
 
 **Source file:** `claude_desktop_config.json` → `mcpServers`
+**Windows path:** `%APPDATA%\Claude\claude_desktop_config.json`
 
 MCP (Model Context Protocol) servers are external processes that Claude launches to extend its capabilities. Each server is a running process with its own command, arguments, and environment variables.
 
@@ -270,6 +275,7 @@ MCP (Model Context Protocol) servers are external processes that Claude launches
 ## 6. 🧩 Extensions (DXT)
 
 **Source file:** `~/Library/Application Support/Claude/extensions-installations.json`
+**Windows path:** `%APPDATA%\Claude\extensions-installations.json`
 
 DXT extensions are packaged plugins for Claude Desktop that provide tools and capabilities. They can be signed (verified by Anthropic) or unsigned (sideloaded).
 
@@ -302,6 +308,7 @@ DXT extensions are packaged plugins for Claude Desktop that provide tools and ca
 ## 7. 📂 Extension Settings
 
 **Source directory:** `~/Library/Application Support/Claude/Claude Extensions Settings/*.json`
+**Windows path:** `%APPDATA%\Claude\Claude Extensions Settings\*.json`
 
 Per-extension settings files contain user-configured options, including filesystem access permissions.
 
@@ -322,6 +329,7 @@ Per-extension settings files contain user-configured options, including filesyst
 ## 8. 🛡️ Extension Governance (Blocklist & Allowlist)
 
 **Source files:** `extensions-blocklist.json`, `config.json` (keys containing `dxt:allowlistEnabled`)
+**Windows paths:** `%APPDATA%\Claude\extensions-blocklist.json`, `%APPDATA%\Claude\config.json`
 
 These checks examine organizational governance controls over extensions.
 
@@ -354,6 +362,7 @@ These checks examine organizational governance controls over extensions.
 ## 9. 🔗 Plugins
 
 **Source files:** `installed_plugins.json`, `remote_cowork_plugins/manifest.json`, marketplace directories, cache directories (per session)
+**Windows paths:** Same filenames under `%APPDATA%\Claude\local-agent-mode-sessions\<org>\<user>\`
 
 Plugins extend Claude Cowork's capabilities. They come in three categories: installed (user-chosen from a marketplace), remote (org-deployed by administrators), and cached (downloaded but not necessarily installed).
 
@@ -395,6 +404,7 @@ Plugins extend Claude Cowork's capabilities. They come in three categories: inst
 ## 10. 🪝 Plugin Hooks
 
 **Source files:** `hooks/hooks.json` inside plugin directories (cowork cached plugins, CC marketplace plugins, remote plugins)
+**Windows paths:** Same relative paths under `%APPDATA%\Claude\` and `%USERPROFILE%\.claude\`
 
 Plugin hooks are shell commands that plugins register to run at specific lifecycle events during a Claude session. They execute automatically without user interaction.
 
@@ -424,6 +434,7 @@ Plugin hooks are shell commands that plugins register to run at specific lifecyc
 ## 11. 🌐 Connectors
 
 **Source files:** `local_*.json` (session files) → `remoteMcpServersConfig`, `.mcp.json` (from remote plugins), extensions, MCP servers
+**Windows note:** On Windows, connector state is read from LevelDB (`mcp-remote-connectors-state` key) and the react-query cache rather than `local_*.json` session files, which do not exist on Windows. The LevelDB database is located at `%APPDATA%\Claude\Local Storage\leveldb\`.
 
 Connectors represent all the external services and integrations that Claude can interact with. CLAUDIT categorizes them as: **web** (OAuth-authenticated cloud services), **desktop** (local extensions and MCP servers), and **not_connected** (defined but not authenticated).
 
@@ -454,6 +465,7 @@ Connectors represent all the external services and integrations that Claude can 
 ## 12. 🎯 Skills
 
 **Source paths:** 9 different filesystem locations (see Architecture section)
+**Windows paths:** Same relative paths under `%APPDATA%\Claude\` and `%USERPROFILE%\.claude\`; scheduled task skills under `%USERPROFILE%\Documents\Claude\Scheduled\`
 
 Skills are SKILL.md files that define reusable prompts and instructions for Claude. They can be user-created, session-local, or provided by plugins.
 
@@ -495,6 +507,7 @@ Skills are SKILL.md files that define reusable prompts and instructions for Clau
 ## 13. ⏰ Scheduled Tasks
 
 **Source file:** `scheduled-tasks.json` (per session)
+**Windows path:** `%APPDATA%\Claude\local-agent-mode-sessions\<org>\<user>\scheduled-tasks.json`
 
 Scheduled tasks are cron-scheduled autonomous Claude sessions. Each task has a cron expression, an enabled flag, and a reference to a SKILL.md file that defines what Claude does when the task runs.
 
@@ -525,6 +538,7 @@ Scheduled tasks are cron-scheduled autonomous Claude sessions. Each task has a c
 ## 14. ⚙️ App Config (config.json)
 
 **Source file:** `~/Library/Application Support/Claude/config.json`
+**Windows path:** `%APPDATA%\Claude\config.json`
 
 The app config contains application-level settings including OAuth tokens, network mode, extension governance controls, and device identifiers.
 
@@ -552,6 +566,7 @@ The app config contains application-level settings including OAuth tokens, netwo
 ## 15. 💻 Claude Code Settings
 
 **Source file:** `~/.claude/settings.json`
+**Windows path:** `%USERPROFILE%\.claude\settings.json`
 
 Claude Code is the CLI-based Claude interface. Its settings file contains permission grants that control what Claude Code is allowed to do.
 
@@ -572,6 +587,7 @@ Claude Code is the CLI-based Claude interface. Its settings file contains permis
 ## 16. 🏃 Runtime State
 
 **Source:** System commands (`pgrep`, `pmset`, `crontab`, filesystem)
+**Windows note:** On Windows, runtime checks use `Get-Process` instead of `pgrep`, `schtasks`/Task Scheduler instead of `crontab`, and the Startup folder (`shell:startup`) instead of LaunchAgents. Power management assertion checks (`pmset`) are macOS-only.
 
 Runtime checks examine the live state of the system to detect Claude-related processes, power management overrides, scheduled system tasks, and persistent agents.
 
@@ -639,6 +655,7 @@ Runtime checks examine the live state of the system to detect Claude-related pro
 ## 17. 🍪 Cookies
 
 **Source files:** `~/Library/Application Support/Claude/Cookies`, `~/Library/Application Support/Claude/Cookies-journal`
+**Windows paths:** `%APPDATA%\Claude\Cookies`, `%APPDATA%\Claude\Cookies-journal`
 
 Claude Desktop (as an Electron app) maintains browser-like cookie storage.
 
@@ -759,4 +776,4 @@ CLAUDIT also builds a **Recommendations** list at the end of the report. Recomme
 
 ---
 
-*This document was generated for CLAUDIT-SEC v2.3.0. Last updated: 2026-03-31.*
+*This document was generated for CLAUDIT-SEC v2.3.0. Last updated: 2026-04-02.*

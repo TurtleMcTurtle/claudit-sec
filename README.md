@@ -46,13 +46,25 @@ CLAUDIT gives you that visibility in a single command.
 
 ### Prerequisites
 
+**macOS:**
+
 | Requirement | How to check | How to install |
 |-------------|-------------|---------------|
 | 🍎 **macOS** | You're on a Mac | — |
 | 🐚 **zsh** | `zsh --version` | Ships with macOS since Catalina |
 | 🔧 **jq** | `jq --version` | `brew install jq` |
 
+**Windows:**
+
+| Requirement | How to check | How to install |
+|-------------|-------------|---------------|
+| 🪟 **Windows 10/11** | You're on a PC | — |
+| ⚡ **PowerShell 5.1+** | `$PSVersionTable.PSVersion` | Ships with Windows 10+ |
+| — | No additional dependencies | Fully self-contained |
+
 ### Install & Run
+
+**macOS:**
 
 ```bash
 git clone https://github.com/HarmonicSecurity/claudit-sec.git
@@ -61,9 +73,19 @@ chmod +x claude_audit.sh
 ./claude_audit.sh
 ```
 
+**Windows:**
+
+```powershell
+git clone https://github.com/HarmonicSecurity/claudit-sec.git
+cd claudit-sec
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1
+```
+
 That's it. The script reads your Claude configuration and prints a colour-coded report to the terminal. It never modifies anything.
 
 ## 🎛️ Usage
+
+**macOS:**
 
 ```
 ./claude_audit.sh [OPTIONS]
@@ -78,7 +100,24 @@ Options:
   -h, --help       Show usage
 ```
 
+**Windows:**
+
+```
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1 [OPTIONS]
+
+Options:
+  -Html [FILE]     Generate a standalone HTML report
+  -Json            Output structured JSON
+  -User USER       Audit a specific user
+  -AllUsers        Audit all users with Claude data (requires admin)
+  -Quiet           Only show WARN and CRITICAL findings
+  -Version         Print version and exit
+  -Help            Show usage
+```
+
 ### Examples
+
+**macOS:**
 
 ```bash
 # Default: colour output in terminal
@@ -96,11 +135,35 @@ Options:
 # Specific user
 ./claude_audit.sh --user jsmith
 
-# All users (run as root via MDM, FleetDM, Jamf, etc.)
+# All users (run as root via MDM — FleetDM, Jamf, Mosyle, CrowdStrike RTR)
 sudo ./claude_audit.sh
 ```
 
-> 💡 When run as **root** (uid 0), the script automatically discovers and scans all users with Claude data. No flags needed.
+**Windows:**
+
+```powershell
+# Default: colour output in terminal
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1
+
+# Only warnings and critical findings
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1 -Quiet
+
+# Standalone HTML report
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1 -Html
+
+# JSON for SIEM ingestion
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1 -Json > audit.json
+
+# Specific user
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1 -User jsmith
+
+# All users (run as admin via MDM — Intune, CrowdStrike RTR)
+powershell -ExecutionPolicy Bypass -File claude_audit.ps1 -AllUsers
+```
+
+> 💡 **macOS:** When run as **root** (uid 0), the script automatically discovers and scans all users with Claude data. No flags needed.
+>
+> 💡 **Windows:** When run as **Administrator**, the script can scan all users with the `-AllUsers` flag. MDM tools like Intune and CrowdStrike RTR execute scripts with elevated privileges.
 
 ## 📊 Output Formats
 
@@ -144,8 +207,8 @@ Structured output for SIEM ingestion. Sensitive fields (OAuth tokens, API keys, 
 - **No network access** — all data collected from local filesystem and system commands
 - **Sensitive data redacted** — tokens, keys, and secrets replaced with `[REDACTED]` in all output formats
 - **Minimal privileges** — runs as current user; root only needed for multi-user scans
-- **Single file** — no dependencies beyond `jq`
-- **Auditable** — the entire tool is one readable shell script
+- **Single file** — macOS requires `jq`; Windows is fully self-contained (no external dependencies)
+- **Auditable** — the entire tool is one readable script (`claude_audit.sh` on macOS, `claude_audit.ps1` on Windows)
 
 ## 💜 Built with Claude Code
 
